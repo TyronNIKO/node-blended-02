@@ -7,7 +7,11 @@
     "createProducts": "node src/scripts/generateProducts",
     "getProductsByCategory": "node src/scripts/getProductsByCategory",
     "getTotalPrice": "node src/scripts/getTotalPrice",
-    "convertToIntPrices": "node src/scripts/convertToIntPrices"
+    "convertToIntPrices": "node src/scripts/convertToIntPrices",
+    "addIdToProduct": "node src/scripts/addIdToProduct",
+    "groupByCategory": "node src/scripts/groupByCategory",
+    "createFiles": "node src/scripts/createFiles",
+    "getFilesInfo": "node src/scripts/getFilesInfo"
   },
   "author": "",
   "license": "ISC",
