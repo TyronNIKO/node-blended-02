@@ -8,6 +8,7 @@ const groupByCategory = async () => {
     //   const filteredCategories = categories.filter((category, index, array) => {
     //     return array.indexOf(category) === index;
     //   });
+
     // на уроці
     // const result = {};
     //   categories.forEach((category) => {
@@ -19,6 +20,7 @@ const groupByCategory = async () => {
     //     });
     //   });
     // кінець на уроці
+
     // опрацювали самостійно
     // const result = {};
     // parsedProducts.forEach(product => {
@@ -29,6 +31,7 @@ const groupByCategory = async () => {
     // });
     // console.log(result);
     // кінець опрацювали самостійно
+
     // чат жипити
     const result = parsedProducts.reduce((acc, product) => {
         (acc[product.category] = acc[product.category] || []).push(product);
