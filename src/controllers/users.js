@@ -3,6 +3,8 @@ import {
   createActiveSession,
   createUser,
   findUserByEmail,
+  logoutUser,
+  refreshSession,
 } from '../services/users.js';
 import bcrypt from 'bcrypt';
 import { setupCookies } from '../utils/setupCookies.js';
@@ -41,6 +43,29 @@ export const loginUserController = async (req, res) => {
   res.status(200).json({
     status: 200,
     message: 'User logged in',
+    data: {
+      accessToken: session.accessToken,
+    },
+  });
+};
+
+export const logoutUserController = async (req, res) => {
+  await logoutUser(req.cookies.sessionId, req.cookies.refreshToken);
+  res.clearCookie('sessionId');
+  res.clearCookie('refreshToken');
+  res.sendStatus(204);
+};
+
+export const refreshSessionController = async (req, res) => {
+  const session = await refreshSession(
+    req.cookies.sessionId,
+    req.cookies.refreshToken,
+  );
+  setupCookies(res, session);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully refreshed a session!',
     data: {
       accessToken: session.accessToken,
     },

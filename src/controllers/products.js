@@ -12,7 +12,8 @@ import {
 } from '../validation/products.js';
 
 export const getProductsController = async (req, res) => {
-  const products = await getProducts();
+  const { _id: userId } = req.user;
+  const products = await getProducts(userId);
   res.status(200).json({
     status: 200,
     message: 'Successfully found products!',
@@ -21,8 +22,12 @@ export const getProductsController = async (req, res) => {
 };
 
 export const getProductByIdController = async (req, res) => {
+  const { _id: userId } = req.user;
   const { productId } = req.params;
-  const product = await getProductById(productId);
+  const product = await getProductById(productId, userId);
+  if (!product) {
+    throw createHttpError(404, 'product not find');
+  }
   res.status(200).json({
     status: 200,
     message: `Successfully found product ${productId}!`,
@@ -31,11 +36,12 @@ export const getProductByIdController = async (req, res) => {
 };
 
 export const createProductController = async (req, res) => {
+  const { _id: userId } = req.user;
   const { error } = createProductSchema.validate(req.body);
   if (error) {
     throw createHttpError(400, error.message);
   }
-  const newProduct = await createProduct(req.body);
+  const newProduct = await createProduct(req.body, userId);
   res.status(201).json({
     status: 201,
     message: 'Successfully created a product!',
@@ -44,8 +50,9 @@ export const createProductController = async (req, res) => {
 };
 
 export const deleteProductController = async (req, res) => {
+  const { _id: userId } = req.user;
   const { productId } = req.params;
-  const result = await deleteProduct(productId);
+  const result = await deleteProduct(productId, userId);
   if (!result) {
     throw createHttpError(404, 'Product not found');
   }
@@ -53,12 +60,13 @@ export const deleteProductController = async (req, res) => {
 };
 
 export const updateProductController = async (req, res) => {
+  const { _id: userId } = req.user;
   const { productId } = req.params;
   const { error } = updateProductSchema.validate(req.body);
   if (error) {
     throw createHttpError(400, error.message);
   }
-  const result = await updateProduct(productId, req.body);
+  const result = await updateProduct(productId, req.body, userId);
   if (!result) throw createHttpError(404, 'Product not found');
   res.status(200).json({
     status: 200,

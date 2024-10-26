@@ -5,12 +5,13 @@ import {
   updateProductController,
   getProductByIdController,
 } from '../controllers/products.js';
+import { checkToken } from '../middlewares/checkToken.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { Router } from 'express';
 
 const router = Router();
-
+router.use(checkToken);
 router.get('/', ctrlWrapper(getProductsController));
 router.get('/:productId', isValidId, ctrlWrapper(getProductByIdController));
 router.post('/', ctrlWrapper(createProductController));

@@ -16,6 +16,9 @@ const productSchema = new Schema(
       required: true,
       default: 'other',
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+    },
     description: String,
   },
   {
