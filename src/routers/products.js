@@ -11,22 +11,10 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.get('/products', ctrlWrapper(getProductsController));
-router.get(
-  '/products/:productId',
-  isValidId,
-  ctrlWrapper(getProductByIdController),
-);
-router.post('/products', ctrlWrapper(createProductController));
-router.delete(
-  '/products/:productId',
-  isValidId,
-  ctrlWrapper(deleteProductController),
-);
-router.patch(
-  '/products/:productId',
-  isValidId,
-  ctrlWrapper(updateProductController),
-);
+router.get('/', ctrlWrapper(getProductsController));
+router.get('/:productId', isValidId, ctrlWrapper(getProductByIdController));
+router.post('/', ctrlWrapper(createProductController));
+router.delete('/:productId', isValidId, ctrlWrapper(deleteProductController));
+router.patch('/:productId', isValidId, ctrlWrapper(updateProductController));
 
 export default router;
