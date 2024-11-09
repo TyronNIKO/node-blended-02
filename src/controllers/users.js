@@ -3,22 +3,20 @@ import {
   //   createActiveSession,
   createUser,
   findUserByEmail,
-  //   logoutUser,
+  updateUserWithToken,
+  logoutUser,
   //   refreshSession,
 } from '../services/users.js';
-// import bcrypt from 'bcrypt';
-// import { setupCookies } from '../utils/setupCookies.js';
+import bcrypt from 'bcrypt';
 
 export const registerUserController = async (req, res) => {
   const { email, name } = req.body;
+  console.log('controller', req.body);
   const user = await findUserByEmail(email);
-  console.log(user);
-
   if (user) {
     throw createHttpError(409, 'User with this email is already exists');
   }
-  console.log(req.body);
-
+  console.log('controller-user', user);
   const newUser = await createUser(req.body);
 
   res.status(201).json({
@@ -30,47 +28,37 @@ export const registerUserController = async (req, res) => {
   });
 };
 
-// export const loginUserController = async (req, res) => {
-//   const { email, password } = req.body;
+export const loginUserController = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await findUserByEmail(email);
+  if (!user) {
+    throw createHttpError(404, 'Credentials are wrong');
+  }
+  const isCorrectPassword = await bcrypt.compare(password, user.password);
+  if (!isCorrectPassword) {
+    throw createHttpError(404, 'Credentials are wrong');
+  }
+  const updatedUser = await updateUserWithToken(user._id);
 
-//   const user = await findUserByEmail(email);
-//   if (!user) {
-//     throw createHttpError(404, 'Credentials are wrong');
-//   }
-//   const isCorrectPassword = await bcrypt.compare(password, user.password);
-//   if (!isCorrectPassword) {
-//     throw createHttpError(404, 'Credentials are wrong');
-//   }
-//   const session = await createActiveSession(user._id);
-//   setupCookies(res, session);
-//   res.status(200).json({
-//     status: 200,
-//     message: 'User logged in',
-//     data: {
-//       accessToken: session.accessToken,
-//     },
-//   });
-// };
+  res.status(201).json({
+    token: updatedUser.token,
+    user: {
+      name: updatedUser.name,
+      email: updatedUser.email,
+    },
+  });
+};
 
-// export const logoutUserController = async (req, res) => {
-//   await logoutUser(req.cookies.sessionId, req.cookies.refreshToken);
-//   res.clearCookie('sessionId');
-//   res.clearCookie('refreshToken');
-//   res.sendStatus(204);
-// };
+export const logoutUserController = async (req, res) => {
+  await logoutUser(req.user._id);
 
-// export const refreshSessionController = async (req, res) => {
-//   const session = await refreshSession(
-//     req.cookies.sessionId,
-//     req.cookies.refreshToken,
-//   );
-//   setupCookies(res, session);
+  res.sendStatus(204);
+};
 
-//   res.status(200).json({
-//     status: 200,
-//     message: 'Successfully refreshed a session!',
-//     data: {
-//       accessToken: session.accessToken,
-//     },
-//   });
-// };
+export const refreshUserController = (req, res) => {
+  const { email, name } = req.user;
+  res.status(200).json({
+    name,
+    email,
+  });
+};
